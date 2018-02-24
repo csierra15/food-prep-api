@@ -5,6 +5,9 @@
   "repository": "https://github.com/csierra15/food-prep-api.git",
   "author": "Carly Sierra <carlylwomack@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "test": "NODE_ENV=test mocha --exit"
+  },
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
