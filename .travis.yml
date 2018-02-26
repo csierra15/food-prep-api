@@ -1,7 +1,7 @@
 language: node_js
 node_js: node
 services:
-- mongod
+    - mongodb
 deploy:
   provider: heroku
   api_key:
