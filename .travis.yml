@@ -1,4 +1,11 @@
 language: node_js
 node_js: node
 services:
-    - mongod
+- mongod
+deploy:
+  provider: heroku
+  api_key:
+    secure: X28fda9LHS2oh73A1YA78x9mYG9YklVX3KdvxcprMXauRnU9fRjo/V1CcnRFXoJfvaBlh33wh8CmW39vdV5KPh27VG9OweJCf3/8tSbvcMUehB1tRD/2v01seqDop3n9rPoXMmLeVhhNpI6Y82QGlESjHjRs8wmXVGV5Srtb2gAUhLhQov+JRBClcbMFSVuZDKtDc9iX+jncMt54Wcgf3WpFCAd9NVnTkOOdZtG/5i5/8sJAAB4yDz0Xr51T4XPcTVL5FkvcFtWzuXBgqpTelouxQLEvudHL1o7OKAqm34sJsEYhlBCYyBZked4nPC/kH1/bJXRJeUmgl/Ruk2pwXHHwtehs4LdN4ktEab9hIYEUAQke/AMwPpU4T3DbSRkmS645hVNhvs78o4CPhV2I8nikBmfw2P7HaqX4KdU9VYjvzzX/u+3Ubq5GoNqeFm9wg5pxsKAWyOG7NqQGcmHbhFzSISF51j2A0pZthtUjNBuuWJ0IbI/CIS1Xhy84qoZdbTiOyZjw+8gjr41rDQLZovjrxYI265g/sMmDTEUY3H/4xGKHb4tQE27byw25SM1IduUAWPxHJbVaJSNlFbU51oVEuNvcHIH7DFhflHDIGRdlr616pVTOJYgI6qGDvGsVm0ujTcGbIniqtn7DDaOQDYHFNopQIPXnqhSEBE5hBwA=
+  app: powerful-garden-82452
+  on:
+    repo: csierra15/food-prep-api
