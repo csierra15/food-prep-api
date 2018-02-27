@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
 
 const { User } = require('./model');
 
@@ -9,7 +10,7 @@ const router = express.Router();
 
 //Register a new user
 
-router.post('/', bodyParser, (req, res) => {
+router.post('/', jsonParser, (req, res) => {
   const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
 

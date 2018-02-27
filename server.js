@@ -10,6 +10,7 @@ const cors = require('cors');
 
 const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
+const { router: mealPlanRouter } = require('./meals');
 
 mongoose.Promise = global.Promise;
 
@@ -68,7 +69,7 @@ let server;
 
 function runServer(dbUrl = DATABASE_URL, port = PORT) {
     return new Promise((resolve, reject) => {
-        mongoose.connect(dbUrl, {useMongoClient: true}, err => {
+        mongoose.connect(dbUrl, err => {
             if (err) {
                 return reject(err);
             }
