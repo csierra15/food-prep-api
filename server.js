@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const passport = require('passport');
 const cors = require('cors');
-const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
 
