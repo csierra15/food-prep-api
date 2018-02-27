@@ -8,6 +8,9 @@ const morgan = require('morgan');
 const passport = require('passport');
 const cors = require('cors');
 
+const { router: usersRouter } = require('./users');
+const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
+
 mongoose.Promise = global.Promise;
 
 const { PORT, DATABASE_URL, CLIENT_ORIGIN } = require('./config');
