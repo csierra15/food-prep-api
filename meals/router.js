@@ -49,10 +49,10 @@ MealPlan
         date: req.body.date,
         menu: req.body.menu
     })
-    .then(meals => res.status(201).json(transactions.serialize()))
+    .then(meals => res.status(201).json(meals.serialize()))
     .catch(err => {
         console.error(err);
-        res.status(500).json({error: 'Could not create new transaction'});
+        res.status(500).json({error: 'Could not create new meal'});
     });
 });
 

@@ -5,17 +5,22 @@ mongoose.Promise = global.Promise;
 
 const uuid = require('uuid');
 
-const xxxSchema = mongoose.Schema({
-
+const shoppingListSchema = mongoose.Schema({
+  date: Date,
+  title: String,
+  content: {type: String, required: true}
 });
 
-xxxSchema.methods.serialize = function() {
+shoppingListSchema.methods.serialize = function() {
 
   return {
     id: this._id,
+    title: this.title,
+    content: this.content,
+    date: this.date
   }
 }
 
-const xxx = mongoose.model('xxx', xxxSchema);
+const ShoppingList = mongoose.model('ShoppingList', xxxSchema);
 
-module.exports = {xxx}
+module.exports = {ShoppingList}
