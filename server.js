@@ -11,6 +11,9 @@ const cors = require('cors');
 const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 const { router: mealPlanRouter } = require('./meals');
+const { router: pantryRouter } = require('./pantry');
+const { router: recipesRouter } = require('./recipes');
+const { router: shoppingListRouter } = require('./shoppingList');
 
 mongoose.Promise = global.Promise;
 
@@ -51,6 +54,10 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
+app.use('/api/meal-plans/', mealPlanRouter);
+app.use('/api/pantry/', pantryRouter);
+app.use('/api/recipes/', recipesRouter);
+app.use('/api/shopping-list/', shoppingListRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
