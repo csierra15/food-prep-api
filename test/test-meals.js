@@ -22,7 +22,7 @@ function seedMealData() {
             menu: faker.lorem.sentences()
         });
     }
-    return Meals.insertMany(seedData);
+    return MealPlan.insertMany(seedData);
 }
 
 function tearDownDb() {
@@ -65,7 +65,7 @@ describe('Meals API resource', function() {
                     });
 
                     resMeal = res.body[0];
-                    return Meals.findById(resMeal.id);
+                    return MealPlan.findById(resMeal.id);
                 })
                 .then(function(meal) {
                     resMeal.id.should.equal(meal.id);
@@ -104,7 +104,7 @@ describe('Meals API resource', function() {
                   }]
               };
 
-              return Meals
+              return MealPlan
                 .findOne()
                 .then(function(meal) {
                     updateData.id = meal.id;
@@ -116,7 +116,7 @@ describe('Meals API resource', function() {
                 .then(function(res) {
                     res.should.have.status(204)
 
-                    return Meals.findById(updateData.id);
+                    return MealPlan.findById(updateData.id);
                 })
                 .then(function(meal) {
                     meal.meal.should.equal(updateData.meal);
@@ -129,7 +129,7 @@ describe('Meals API resource', function() {
 
           let meal;
 
-          return Meals
+          return MealPlan
             .findOne()
             .then(function(_meal) {
               meal = _meal;

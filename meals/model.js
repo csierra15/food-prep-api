@@ -6,11 +6,11 @@ mongoose.Promise = global.Promise;
 const uuid = require('uuid');
 
 const mealPlanSchema = mongoose.Schema({
-  date: {type: Date, required: true},
+  date: {type: String, required: true},
   menu: {type: [{
     type: String,
     meal: String
-  }], required: true},
+  }], required: true}
 });
 
 mealPlanSchema.methods.serialize = function() {
