@@ -11,7 +11,7 @@ const jsonParser = bodyParser.json();
 
 const { MealPlan } = require('./model');
 
-router.get('/api/meal-plan', (req, res) => {
+router.get('/', (req, res) => {
     MealPlan
         .find()
         .then(meals => {
@@ -23,7 +23,7 @@ router.get('/api/meal-plan', (req, res) => {
         });
 });
 
-router.get('/api/meal-plan:id', (req, res) => {
+router.get('/:id', (req, res) => {
     MealPlan
         .findById(req.params.id)
         .then(meal => res.json(meal.serialize()))
@@ -33,7 +33,7 @@ router.get('/api/meal-plan:id', (req, res) => {
         });
 });
 
-router.post('/api/meal-plan', (req, res) => {
+router.post('/', (req, res) => {
     const requiredFields = ['date', 'menu'];
     for (let i=0; i<requiredFields.length; i++) {
         const field = requiredFields[i];
@@ -56,7 +56,7 @@ MealPlan
     });
 });
 
-router.put('/api/meal-plan:id', (req, res) => {
+router.put('/:id', (req, res) => {
     if (!(req.params.id && req.body.updatedMeal.id && req.params.id === req.body.updatedMeal.id)) {
         console.log(req.body.updatedMeal.id);
         res.status(400).json({
@@ -81,7 +81,7 @@ router.put('/api/meal-plan:id', (req, res) => {
         .catch(err => res.status(500).json({ message: 'Could not update' }));
 });
 
-router.delete('/api/meal-plan:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     MealPlan
         .findByIdAndRemove(req.params.id)
         .then(() => {

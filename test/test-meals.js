@@ -6,7 +6,7 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const should = chai.should();
 
-const { MealPlan } = require('../meals');
+const { MealPlan, router } = require('../meals');
 const { app, runServer, closeServer } = require('../server');
 const { DATABASE_URL } = require('../config');
 
@@ -52,7 +52,7 @@ describe('Meals API resource', function() {
               let res;
               let resMeal;
               return chai.request(app)
-                .get('/meal-plan')
+                .get('/')
                 .then(function(res) {
                     res.should.have.status(200);
                     res.should.be.json;
@@ -81,7 +81,7 @@ describe('Meals API resource', function() {
             };
 
               return chai.request(app)
-                .post('/meal-plan')
+                .post('/api/')
                 .send(newMeal)
                 .then(function(res) {
                     res.should.have.status(201);
@@ -110,7 +110,7 @@ describe('Meals API resource', function() {
                     updateData.id = meal.id;
 
                     return chai.request(app)
-                        .put(`/meal-plan/${meal.id}`)
+                        .put(`/api/${meal.id}`)
                         .send(updateData);
                 })
                 .then(function(res) {
@@ -133,7 +133,7 @@ describe('Meals API resource', function() {
             .findOne()
             .then(function(_meal) {
               meal = _meal;
-              return chai.request(app).delete(`/meal-plan/${meal.id}`);
+              return chai.request(app).delete(`/api/${meal.id}`);
             })
             .then(function(res) {
               res.should.have.status(204);

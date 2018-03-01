@@ -24,4 +24,4 @@ mealPlanSchema.methods.serialize = function() {
 
 const MealPlan = mongoose.model('MealPlan', mealPlanSchema);
 
-module.exports = {MealPlan}
+module.exports = { MealPlan }
