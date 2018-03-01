@@ -52,7 +52,7 @@ describe('Meals API resource', function() {
               let res;
               let resMeal;
               return chai.request(app)
-                .get('/')
+                .get('/api/meal-plans/')
                 .then(function(res) {
                     res.should.have.status(200);
                     res.should.be.json;
@@ -60,8 +60,8 @@ describe('Meals API resource', function() {
                     res.body.should.have.length.of.at.least(1);
 
                     res.body.forEach(function(meal) {
-                        goal.should.be.a('object');
-                        goal.should.include.keys('id', 'date', 'menu');
+                        meal.should.be.a('object');
+                        meal.should.include.keys('id', 'date', 'menu');
                     });
 
                     resMeal = res.body[0];
@@ -81,7 +81,7 @@ describe('Meals API resource', function() {
             };
 
               return chai.request(app)
-                .post('/api/')
+                .post('/api/meal-plans/')
                 .send(newMeal)
                 .then(function(res) {
                     res.should.have.status(201);
@@ -110,7 +110,7 @@ describe('Meals API resource', function() {
                     updateData.id = meal.id;
 
                     return chai.request(app)
-                        .put(`/api/${meal.id}`)
+                        .put(`/api/meal-plans/${meal.id}`)
                         .send(updateData);
                 })
                 .then(function(res) {
@@ -133,11 +133,11 @@ describe('Meals API resource', function() {
             .findOne()
             .then(function(_meal) {
               meal = _meal;
-              return chai.request(app).delete(`/api/${meal.id}`);
+              return chai.request(app).delete(`/api/meal-plans/${meal.id}`);
             })
             .then(function(res) {
               res.should.have.status(204);
-              return Meals.findById(meal.id);
+              return MealPlan.findById(meal.id);
             })
             .then(function(_meal) {
               should.not.exist(_meal);

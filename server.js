@@ -25,14 +25,6 @@ app.use(
     })
 );
 
-app.get('/api/*', (req, res) => {
-  res.json({ok: true});
-});
-
-app.use('*', (req, res) => {
-    return res.status(404).json({ message: 'Not Found' });
-});
-
 // Logging
 app.use(morgan('common'));
 
@@ -64,10 +56,6 @@ app.get('/api/protected', jwtAuth, (req, res) => {
   return res.json({
     data: 'rosebud'
   });
-});
-
-app.use('*', (req, res) => {
-  return res.status(404).json({ message: 'Not Found' });
 });
 
 let server;
@@ -106,6 +94,6 @@ function closeServer() {
 
 if (require.main === module) {
     runServer().catch(err => console.error(err));
-  }
+}
 
 module.exports = { app, runServer, closeServer };
