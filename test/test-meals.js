@@ -119,7 +119,8 @@ describe('Meals API resource', function() {
                     return MealPlan.findById(updateData.id);
                 })
                 .then(function(meal) {
-                    meal.meal.should.equal(updateData.meal);
+                    meal.menu.type.should.equal(updateData.type);
+                    meal.menu.meal.should.equal(updateData.meal);
                 });
           });
       });
