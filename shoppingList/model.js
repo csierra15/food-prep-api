@@ -6,9 +6,9 @@ mongoose.Promise = global.Promise;
 const uuid = require('uuid');
 
 const shoppingListSchema = mongoose.Schema({
-  date: Date,
+  date: String,
   title: String,
-  content: {type: String, required: true}
+  content: String
 });
 
 shoppingListSchema.methods.serialize = function() {

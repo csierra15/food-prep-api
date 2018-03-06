@@ -8,6 +8,7 @@ mongoose.Promie = global.Promise;
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+router.use(jsonParser);
 
 const { Recipes } = require('./model');
 
@@ -34,7 +35,7 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const requiredFields = ['date', 'menu'];
+    const requiredFields = ['title', 'content', 'cookingTime', 'servings', 'notes'];
     for (let i=0; i<requiredFields.length; i++) {
         const field = requiredFields[i];
         if (!(field in req.body)) {
@@ -46,8 +47,11 @@ router.post('/', (req, res) => {
 
 Recipes
     .create({
-        date: req.body.date,
-        menu: req.body.menu
+        title: req.body.title,
+        content: req.body.content,
+        cookingTime: req.body.cookingTime,
+        servings: req.body.servings,
+        notes: req.body.notes
     })
     .then(recipes => res.status(201).json(recipes.serialize()))
     .catch(err => {
@@ -56,29 +60,23 @@ Recipes
     });
 });
 
-router.put('/:id', (req, res) => {
-    if (!(req.params.id && req.body.updatedRecipe.id && req.params.id === req.body.updatedRecipe.id)) {
-        console.log(req.body.updatedRecipe.id);
-        res.status(400).json({
-          error: `Request path id and request body id ${req.body.updatedRecipe.id} values must match`
-        });
+router.put('/:id', jsonParser, (req, res) => {
+    if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+      const message = (`Request path id and request body id ${req.body.id} must match`)
+      console.error(message);
+      return res.status(400).json({ message: message })
+    }
+    const toUpdate = {};
+    const updateableFields = ['title', 'content', 'cookingTime', 'servings', 'notes'];
+    updateableFields.forEach(field => {
+      if (field in req.body) {
+        toUpdate[field] = req.body[field];
       }
-
-      const updated = {};
-      const updateableFields = ['title', 'content', 'cookingTime', 'servings', 'notes'];
-      updateableFields.forEach(field => {
-          console.log(field);
-          console.log(req.body);
-        if (field in req.body != 0) {
-            console.log(req.body);
-          updated[field] = req.body.updatedRecipe[field];
-        }
-      });
-
-      Recipes
-        .findByIdAndUpdate(req.params.id, { $set: req.body.updatedRecipe }, { new: true })
-        .then(updatedRecipes => res.json(updatedRecipes))
-        .catch(err => res.status(500).json({ message: 'Could not update' }));
+    });
+    Recipes
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate })
+      .then(items => res.status(204).end())
+      .catch(err => res.status(500).json({ message: 'Could not update' }));
 });
 
 router.delete('/:id', (req, res) => {

@@ -8,6 +8,7 @@ mongoose.Promie = global.Promise;
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+router.use(jsonParser);
 
 const { Pantry } = require('./model');
 
@@ -34,7 +35,7 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const requiredFields = ['date', 'menu'];
+    const requiredFields = ['category', 'item'];
     for (let i=0; i<requiredFields.length; i++) {
         const field = requiredFields[i];
         if (!(field in req.body)) {
@@ -56,29 +57,24 @@ Pantry
     });
 });
 
-router.put('/:id', (req, res) => {
-    if (!(req.params.id && req.body.uupdatedPantry.id && req.params.id === req.body.updatedPantry.id)) {
-        console.log(req.body.updatedPantry.id);
-        res.status(400).json({
-          error: `Request path id and request body id ${req.body.updatedPantry.id} values must match`
-        });
+router.put('/:id', jsonParser, (req, res) => {
+    if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+      console.log(req.body, req.body.id, req.params.id);
+      const message = (`Request path id and request body id ${req.body.id} must match`)
+      console.error(message);
+      return res.status(400).json({ message: message })
+    }
+    const toUpdate = {};
+    const updateableFields = ['category', 'item'];
+    updateableFields.forEach(field => {
+      if (field in req.body) {
+        toUpdate[field] = req.body[field];
       }
-
-      const updated = {};
-      const updateableFields = ['category', 'item'];
-      updateableFields.forEach(field => {
-          console.log(field);
-          console.log(req.body);
-        if (field in req.body != 0) {
-            console.log(req.body);
-          updated[field] = req.body.updatedPantry[field];
-        }
-      });
-
-      Pantry
-        .findByIdAndUpdate(req.params.id, { $set: req.body.updatedPantry }, { new: true })
-        .then(updatedPantry => res.json(updatedPantry))
-        .catch(err => res.status(500).json({ message: 'Could not update' }));
+    });
+    Pantry
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate })
+      .then(items => res.status(204).end())
+      .catch(err => res.status(500).json({ message: 'Could not update' }));
 });
 
 router.delete('/:id', (req, res) => {

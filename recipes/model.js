@@ -6,8 +6,8 @@ mongoose.Promise = global.Promise;
 const uuid = require('uuid');
 
 const recipeSchema = mongoose.Schema({
-  title: {type: String, required: true},
-  content: {type: String, required: true},
+  title: String,
+  content: String,
   cookingTime: String,
   servings: String,
   notes: String

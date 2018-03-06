@@ -6,23 +6,27 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const should = chai.should();
 
-const { MealPlan, router } = require('../meals');
+const { Recipes, router } = require('../recipes');
 const { app, runServer, closeServer } = require('../server');
 const { DATABASE_URL } = require('../config');
 
 chai.use(chaiHttp);
 
-function seedMealData() {
-    console.info('seeding meal data');
+function seedRecipeData() {
+    console.info('seeding recipe data');
     const seedData = [];
 
     for (let i=0; i<=10; i++) {
-        seedData.push({
-            date: faker.date.past(),
-            menu: faker.lorem.sentences()
-        });
+      seedData.push({
+        title: faker.lorem.words(),
+        content: faker.lorem.words(),
+        cookingTime: faker.random.number(),
+        servings: faker.random.number(),
+        notes: faker.lorem.sentence()
+      });
     }
-    return MealPlan.insertMany(seedData);
+
+    return Recipes.insertMany(seedData);
 }
 
 function tearDownDb() {
@@ -30,13 +34,13 @@ function tearDownDb() {
     return mongoose.connection.dropDatabase();
   }
 
-describe('Meal Plan API resource', function() {
+describe('Recipe API resource', function() {
     before(function() {
         return runServer(DATABASE_URL);
       });
 
       beforeEach(function() {
-        return seedMealData();
+        return seedRecipeData();
       });
 
       afterEach(function() {
@@ -48,45 +52,48 @@ describe('Meal Plan API resource', function() {
       });
 
       describe('GET endpoint', function() {
-          it('should return all meals', function() {
+          it('should return all recipes', function() {
               let res;
-              let resMeal;
+              let resRecipes;
               return chai.request(app)
-                .get('/api/meal-plans/')
+                .get('/api/recipes/')
                 .then(function(res) {
                     res.should.have.status(200);
                     res.should.be.json;
                     res.body.should.be.a('array');
                     res.body.should.have.length.of.at.least(1);
 
-                    res.body.forEach(function(meal) {
-                        meal.should.be.a('object');
-                        meal.should.include.keys('id', 'date', 'menu');
+                    res.body.forEach(function(recipe) {
+                        recipe.should.be.a('object');
+                        recipe.should.include.keys('id', 'title', 'content', 'cookingTime', 'servings', 'notes');
                     });
 
-                    resMeal = res.body[0];
-                    return MealPlan.findById(resMeal.id);
+                    resRecipes = res.body[0];
+                    return Recipes.findById(resRecipes.id);
                 })
-                .then(function(meal) {
-                    resMeal.id.should.equal(meal.id);
+                .then(function(recipe) {
+                    resRecipes.id.should.equal(recipe.id);
                 });
           });
       });
 
       describe('POST endpoint', function() {
-          it('should add a new meal', function() {
-              const newMeal = {
-                date: faker.lorem.word(),
-                menu: faker.lorem.sentences()
-            };
+          it('should add a new recipe', function() {
+              const newRecipe = {
+                title: faker.lorem.words(),
+                content: faker.lorem.words(),
+                cookingTime: faker.random.number(),
+                servings: faker.random.number(),
+                notes: faker.lorem.sentence()
+              };
 
               return chai.request(app)
-                .post('/api/meal-plans/')
-                .send(newMeal)
+                .post('/api/recipes/')
+                .send(newRecipe)
                 .then(function(res) {
                     res.should.have.status(201);
                     res.body.should.be.a('object');
-                    res.body.should.include.keys('id', 'date', 'menu');
+                    res.body.should.include.keys('id', 'title', 'content', 'cookingTime', 'servings', 'notes');
                     res.body.id.should.not.be.null;
                 });
           });
@@ -95,24 +102,24 @@ describe('Meal Plan API resource', function() {
       // describe('PUT endpoint', function() {
       //     it('should update fields sent over', function() {
       //         const updateData = {
-      //             menu: [{
-      //               type: 'Breakfast',
-      //               meal: 'spinach, bacon, mushroom, swiss omelette'
-      //             }]
-      //         };
+                    // title: Black Bean Quesadillas,
+                    // content: 1 can black beans, tortillas, cheese,
+                    // cookingTime: 15 min
+      //         }
       //
-      //         return MealPlan
+      //
+      //         return Recipes
       //           .findOne()
       //           .then(function(res) {
       //               updateData.id = res.body.id;
       //
       //               return chai.request(app)
-      //                   .put(`/api/meal-plans/${meal.id}`)
+      //                   .put(`/api/recipes/${recipe.id}`)
       //                   .send(updateData);
       //           })
       //           .then(function(res) {
       //               res.should.have.status(204)
-      //               return MealPlan.findById(updateData.id);
+      //               return Recipes.findById(updateData.id);
       //           })
       //           .then(function(res) {
       //               res.body.menu.should.equal(updateData.menu);
@@ -121,22 +128,22 @@ describe('Meal Plan API resource', function() {
       // });
 
       describe('DELETE endpoint', function() {
-        it('delete a meal by id', function() {
+        it('delete a recipe by id', function() {
 
-          let meal;
+          let recipe;
 
-          return MealPlan
+          return Recipes
             .findOne()
-            .then(function(_meal) {
-              meal = _meal;
-              return chai.request(app).delete(`/api/meal-plans/${meal.id}`);
+            .then(function(_recipe) {
+              recipe = _recipe;
+              return chai.request(app).delete(`/api/recipes/${recipe.id}`);
             })
             .then(function(res) {
               res.should.have.status(204);
-              return MealPlan.findById(meal.id);
+              return Recipes.findById(recipe.id);
             })
-            .then(function(_meal) {
-              should.not.exist(_meal);
+            .then(function(_recipe) {
+              should.not.exist(_recipe);
             });
         });
       });

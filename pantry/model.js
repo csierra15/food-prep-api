@@ -6,8 +6,8 @@ mongoose.Promise = global.Promise;
 const uuid = require('uuid');
 
 const pantrySchema = mongoose.Schema({
-  category: {type: String, required: true},
-  item: {type: String, required: true}
+  category: String,
+  item: String
 });
 
 pantrySchema.methods.serialize = function() {

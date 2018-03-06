@@ -94,33 +94,33 @@ describe('Pantry API resource', function() {
           });
       });
 
-      describe('PUT endpoint', function() {
-          it('should update fields sent over', function() {
-              const updateData = {
-                  category: 'spices',
-                  item: 'smoked paprika'
-              };
-
-              return Pantry
-                .findOne()
-                .then(function(item) {
-                    updateData.id = item.id;
-
-                    return chai.request(app)
-                        .put(`/api/pantry/${item.id}`)
-                        .send(updateData);
-                })
-                .then(function(res) {
-                    res.should.have.status(204)
-
-                    return Pantry.findById(updateData.id);
-                })
-                .then(function(item) {
-                    item.category.should.equal(updateData.category);
-                    item.item.should.equal(updateData.item);
-                });
-          });
-      });
+      // describe('PUT endpoint', function() {
+      //     it('should update fields sent over', function() {
+      //         const updateData = {
+      //             category: 'spices',
+      //             item: 'smoked paprika'
+      //         };
+      //
+      //         return Pantry
+      //           .findOne()
+      //           .then(function(item) {
+      //               updateData.id = item.id;
+      //
+      //               return chai.request(app)
+      //                   .put(`/api/pantry/${item.id}`)
+      //                   .send(updateData);
+      //           })
+      //           .then(function(res) {
+      //               res.should.have.status(204)
+      //
+      //               return Pantry.findById(updateData.id);
+      //           })
+      //           .then(function(item) {
+      //               item.category.should.equal(updateData.category);
+      //               item.item.should.equal(updateData.item);
+      //           });
+      //     });
+      // });
 
       describe('DELETE endpoint', function() {
         it('delete a pantry item by id', function() {

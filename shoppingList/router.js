@@ -8,6 +8,7 @@ mongoose.Promie = global.Promise;
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+router.use(jsonParser);
 
 const { ShoppingList } = require('./model');
 
@@ -34,7 +35,7 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const requiredFields = ['date', 'menu'];
+    const requiredFields = ['date', 'title', 'content'];
     for (let i=0; i<requiredFields.length; i++) {
         const field = requiredFields[i];
         if (!(field in req.body)) {
@@ -47,7 +48,8 @@ router.post('/', (req, res) => {
 ShoppingList
     .create({
         date: req.body.date,
-        menu: req.body.menu
+        title: req.body.title,
+        content: req.body.content
     })
     .then(shoppingLists => res.status(201).json(shoppingLists.serialize()))
     .catch(err => {
@@ -56,29 +58,23 @@ ShoppingList
     });
 });
 
-router.put('/:id', (req, res) => {
-    if (!(req.params.id && req.body.updatedShoppingList.id && req.params.id === req.body.updatedShoppingList.id)) {
-        console.log(req.body.updatedShoppingList.id);
-        res.status(400).json({
-          error: `Request path id and request body id ${req.body.updatedShoppingList.id} values must match`
-        });
+router.put('/:id', jsonParser, (req, res) => {
+    if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+      const message = (`Request path id and request body id ${req.body.id} must match`)
+      console.error(message);
+      return res.status(400).json({ message: message })
+    }
+    const toUpdate = {};
+    const updateableFields = ['date', 'title', 'content'];
+    updateableFields.forEach(field => {
+      if (field in req.body) {
+        toUpdate[field] = req.body[field];
       }
-
-      const updated = {};
-      const updateableFields = ['date', 'title', 'content'];
-      updateableFields.forEach(field => {
-          console.log(field);
-          console.log(req.body);
-        if (field in req.body != 0) {
-            console.log(req.body);
-          updated[field] = req.body.updatedShoppingList[field];
-        }
-      });
-
-      ShoppingList
-        .findByIdAndUpdate(req.params.id, { $set: req.body.updatedShoppingList }, { new: true })
-        .then(updatedShoppingList => res.json(updatedShoppingList))
-        .catch(err => res.status(500).json({ message: 'Could not update' }));
+    });
+    ShoppingList
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate })
+      .then(items => res.status(204).end())
+      .catch(err => res.status(500).json({ message: 'Could not update' }));
 });
 
 router.delete('/:id', (req, res) => {

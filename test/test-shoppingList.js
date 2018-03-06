@@ -6,23 +6,24 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const should = chai.should();
 
-const { MealPlan, router } = require('../meals');
+const { ShoppingList, router } = require('../shoppingList');
 const { app, runServer, closeServer } = require('../server');
 const { DATABASE_URL } = require('../config');
 
 chai.use(chaiHttp);
 
-function seedMealData() {
-    console.info('seeding meal data');
+function seedShoppingListData() {
+    console.info('seeding shoppingList data');
     const seedData = [];
 
     for (let i=0; i<=10; i++) {
         seedData.push({
-            date: faker.date.past(),
-            menu: faker.lorem.sentences()
+          date: faker.lorem.word(),
+          title: faker.lorem.words(),
+          content: faker.lorem.sentences()
         });
     }
-    return MealPlan.insertMany(seedData);
+    return ShoppingList.insertMany(seedData);
 }
 
 function tearDownDb() {
@@ -30,13 +31,13 @@ function tearDownDb() {
     return mongoose.connection.dropDatabase();
   }
 
-describe('Meal Plan API resource', function() {
+describe('Shopping lists API resource', function() {
     before(function() {
         return runServer(DATABASE_URL);
       });
 
       beforeEach(function() {
-        return seedMealData();
+        return seedShoppingListData();
       });
 
       afterEach(function() {
@@ -48,45 +49,46 @@ describe('Meal Plan API resource', function() {
       });
 
       describe('GET endpoint', function() {
-          it('should return all meals', function() {
+          it('should return all shopping lists', function() {
               let res;
-              let resMeal;
+              let resShoppingList;
               return chai.request(app)
-                .get('/api/meal-plans/')
+                .get('/api/shopping-lists/')
                 .then(function(res) {
                     res.should.have.status(200);
                     res.should.be.json;
                     res.body.should.be.a('array');
                     res.body.should.have.length.of.at.least(1);
 
-                    res.body.forEach(function(meal) {
-                        meal.should.be.a('object');
-                        meal.should.include.keys('id', 'date', 'menu');
+                    res.body.forEach(function(shoppingList) {
+                        shoppingList.should.be.a('object');
+                        shoppingList.should.include.keys('id', 'date', 'title', 'content');
                     });
 
-                    resMeal = res.body[0];
-                    return MealPlan.findById(resMeal.id);
+                    resShoppingList = res.body[0];
+                    return ShoppingList.findById(resShoppingList.id);
                 })
-                .then(function(meal) {
-                    resMeal.id.should.equal(meal.id);
+                .then(function(shoppingList) {
+                    resShoppingList.id.should.equal(shoppingList.id);
                 });
           });
       });
 
       describe('POST endpoint', function() {
-          it('should add a new meal', function() {
-              const newMeal = {
-                date: faker.lorem.word(),
-                menu: faker.lorem.sentences()
+          it('should add a new shopping list', function() {
+              const newShoppingList = {
+                date: '3-8-18',
+                title: 'My Shopping List',
+                content: 'bananas, apples, butter'
             };
 
               return chai.request(app)
-                .post('/api/meal-plans/')
-                .send(newMeal)
+                .post('/api/shopping-lists/')
+                .send(newShoppingList)
                 .then(function(res) {
                     res.should.have.status(201);
                     res.body.should.be.a('object');
-                    res.body.should.include.keys('id', 'date', 'menu');
+                    res.body.should.include.keys('id', 'date', 'title', 'content');
                     res.body.id.should.not.be.null;
                 });
           });
@@ -97,22 +99,22 @@ describe('Meal Plan API resource', function() {
       //         const updateData = {
       //             menu: [{
       //               type: 'Breakfast',
-      //               meal: 'spinach, bacon, mushroom, swiss omelette'
+      //               shoppingList: 'spinach, bacon, mushroom, swiss omelette'
       //             }]
       //         };
       //
-      //         return MealPlan
+      //         return ShoppingList
       //           .findOne()
       //           .then(function(res) {
       //               updateData.id = res.body.id;
       //
       //               return chai.request(app)
-      //                   .put(`/api/meal-plans/${meal.id}`)
+      //                   .put(`/api/shopping-lists/${shoppingList.id}`)
       //                   .send(updateData);
       //           })
       //           .then(function(res) {
       //               res.should.have.status(204)
-      //               return MealPlan.findById(updateData.id);
+      //               return ShoppingList.findById(updateData.id);
       //           })
       //           .then(function(res) {
       //               res.body.menu.should.equal(updateData.menu);
@@ -121,22 +123,22 @@ describe('Meal Plan API resource', function() {
       // });
 
       describe('DELETE endpoint', function() {
-        it('delete a meal by id', function() {
+        it('delete a shopping list by id', function() {
 
-          let meal;
+          let shoppingList;
 
-          return MealPlan
+          return ShoppingList
             .findOne()
-            .then(function(_meal) {
-              meal = _meal;
-              return chai.request(app).delete(`/api/meal-plans/${meal.id}`);
+            .then(function(_shoppingList) {
+              shoppingList = _shoppingList;
+              return chai.request(app).delete(`/api/shopping-lists/${shoppingList.id}`);
             })
             .then(function(res) {
               res.should.have.status(204);
-              return MealPlan.findById(meal.id);
+              return ShoppingList.findById(shoppingList.id);
             })
-            .then(function(_meal) {
-              should.not.exist(_meal);
+            .then(function(_shoppingList) {
+              should.not.exist(_shoppingList);
             });
         });
       });

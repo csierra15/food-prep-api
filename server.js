@@ -47,7 +47,7 @@ app.use('/api/auth/', authRouter);
 app.use('/api/meal-plans/', mealPlanRouter);
 app.use('/api/pantry/', pantryRouter);
 app.use('/api/recipes/', recipesRouter);
-app.use('/api/shopping-list/', shoppingListRouter);
+app.use('/api/shopping-lists/', shoppingListRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 

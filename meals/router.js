@@ -8,6 +8,7 @@ mongoose.Promie = global.Promise;
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+router.use(jsonParser);
 
 const { MealPlan } = require('./model');
 
@@ -17,7 +18,7 @@ router.get('/', (req, res) => {
         .then(meals => {
             res.json(meals.map(meal => meal.serialize()));
         })
-        .catch(err => {meal
+        .catch(err => {
             console.error(err);
             res.status(500).json({error: 'Could not GET'});
         });
@@ -56,29 +57,24 @@ MealPlan
     });
 });
 
-router.put('/:id', (req, res) => {
-    if (!(req.params.id && req.body.updatedMeal.id && req.params.id === req.body.updatedMeal.id)) {
-        console.log(req.body.updatedMeal.id);
-        res.status(400).json({
-          error: `Request path id and request body id ${req.body.updatedMeal.id} values must match`
-        });
+router.put('/:id', jsonParser, (req, res) => {
+    if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+      console.log(req.body, req.body.id, req.params.id);
+      const message = (`Request path id and request body id ${req.body.id} must match`)
+      console.error(message);
+      return res.status(400).json({ message: message })
+    }
+    const toUpdate = {};
+    const updateableFields = ['date', 'menu'];
+    updateableFields.forEach(field => {
+      if (field in req.body) {
+        toUpdate[field] = req.body[field];
       }
-
-      const updated = {};
-      const updateableFields = ['date', 'menu'];
-      updateableFields.forEach(field => {
-          console.log(field);
-          console.log(req.body);
-        if (field in req.body != 0) {
-            console.log(req.body);
-          updated[field] = req.body.updatedMeal[field];
-        }
-      });
-
-      MealPlan
-        .findByIdAndUpdate(req.params.id, { $set: req.body.updatedMeal }, { new: true })
-        .then(updatedMealPlan => res.json(updatedMealPlan))
-        .catch(err => res.status(500).json({ message: 'Could not update' }));
+    });
+    MealPlan
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate })
+      .then(meals => res.status(204).end())
+      .catch(err => res.status(500).json({ message: 'Could not update' }));
 });
 
 router.delete('/:id', (req, res) => {
