@@ -23,7 +23,7 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  const stringFields = ['username', 'password', 'firstName', 'lastName'];
+  const stringFields = ['username', 'password'];
   const nonStringField = stringFields.find(
     field => field in req.body && typeof req.body[field] !== 'string'
   );
@@ -85,11 +85,7 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  let {username, password, firstName = '', lastName = ''} = req.body;
-  // Username and password come in pre-trimmed, otherwise we throw an error
-  // before this
-  firstName = firstName.trim();
-  lastName = lastName.trim();
+  let {username, password} = req.body;
 
   return User.find({username})
     .count()
@@ -109,9 +105,7 @@ router.post('/', jsonParser, (req, res) => {
     .then(hash => {
       return User.create({
         username,
-        password: hash,
-        firstName,
-        lastName
+        password: hash
       });
     })
     .then(user => {
@@ -130,7 +124,8 @@ router.post('/', jsonParser, (req, res) => {
   // Never expose all your users like below in a prod application
   // we're just doing this so we have a quick way to see
   // if we're creating users. keep in mind, you can also
-  // verify this in the Mongo shell. ***REMOVE BEFORE PROD***
+  // verify this in the Mongo shell.
+  // ***REMOVE BEFORE PROD***
   router.get('/', (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.serialize())))
