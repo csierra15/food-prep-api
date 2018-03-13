@@ -1,11 +1,10 @@
 'use strict'
-
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-
 const uuid = require('uuid');
 
 const recipeSchema = mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   title: String,
   content: String,
   cookingTime: String,

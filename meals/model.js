@@ -1,8 +1,6 @@
 'use strict'
-
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-
 const uuid = require('uuid');
 
 const mealPlanSchema = mongoose.Schema({

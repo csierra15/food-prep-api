@@ -1,10 +1,10 @@
 'use strict'
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const { User } = require('./model');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 //Register a new user
 
@@ -102,6 +102,7 @@ return User.find({username})
   })
   .then(hash => {
     return User.create({
+      _id: new mongoose.Types.ObjectId(),
       username,
       password: hash
     });

@@ -6,6 +6,9 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const should = chai.should();
 
+const passport = require('passport');
+chai.use(passport.authenticate('jwt', { session: true }))
+
 const { MealPlan, router } = require('../meals');
 const { app, runServer, closeServer } = require('../server');
 const { DATABASE_URL } = require('../config');

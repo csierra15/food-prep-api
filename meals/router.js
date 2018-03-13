@@ -1,15 +1,13 @@
 'use strict'
-
 const express = require('express');
 const router = express.Router();
-
 const mongoose = require('mongoose');
-mongoose.Promie = global.Promise;
-
+mongoose.Promise = global.Promise;
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 router.use(jsonParser);
-
+const passport = require('passport');
+router.use(passport.authenticate('jwt', { session: false }))
 const { MealPlan } = require('./model');
 
 router.get('/', (req, res) => {
