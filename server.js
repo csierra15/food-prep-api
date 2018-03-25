@@ -12,13 +12,12 @@ const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 const { router: mealPlanRouter } = require('./meals');
 const { router: pantryRouter } = require('./pantry');
 const { router: recipesRouter } = require('./recipes');
-const { router: shoppingListRouter } = require('./shoppingList');
+const { router: listRouter } = require('./lists');
 
 mongoose.Promise = global.Promise;
 
 const { PORT, DATABASE_URL, CLIENT_ORIGIN } = require('./config');
 
-// Logging
 app.use(morgan('common'));
 
 app.use(
@@ -27,7 +26,6 @@ app.use(
     })
 );
 
-// CORS
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
@@ -43,10 +41,10 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
-app.use('/api/meal-plans/', mealPlanRouter);
+app.use('/api/meals/', mealPlanRouter);
 app.use('/api/pantry/', pantryRouter);
 app.use('/api/recipes/', recipesRouter);
-app.use('/api/shopping-lists/', shoppingListRouter);
+app.use('/api/lists/', listRouter);
 
 let server;
 

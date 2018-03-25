@@ -4,19 +4,22 @@ mongoose.Promise = global.Promise;
 const uuid = require('uuid');
 
 const mealPlanSchema = mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  date: String,
-  menu: Array
+  title: String,
+  start: Date,
+  end: Date,
+  desc: Object
 });
 
 mealPlanSchema.methods.serialize = function() {
   return {
     id: this._id,
-    date: this.date,
-    menu: this.menu
+    title: this.title,
+    start: this.start,
+    end: this.end,
+    desc: this.desc
   }
 }
 
 const MealPlan = mongoose.model('MealPlan', mealPlanSchema);
 
-module.exports = { MealPlan }
+module.exports = { MealPlan, mealPlanSchema }

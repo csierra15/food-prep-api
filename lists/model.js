@@ -1,17 +1,15 @@
 'use strict'
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-
 const uuid = require('uuid');
 
-const shoppingListSchema = mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+const listSchema = mongoose.Schema({
   date: String,
   title: String,
   content: String
 });
 
-shoppingListSchema.methods.serialize = function() {
+listSchema.methods.serialize = function() {
 
   return {
     id: this._id,
@@ -21,6 +19,6 @@ shoppingListSchema.methods.serialize = function() {
   }
 }
 
-const ShoppingList = mongoose.model('ShoppingList', shoppingListSchema);
+const List = mongoose.model('List', listSchema);
 
-module.exports = {ShoppingList}
+module.exports = {List, listSchema}

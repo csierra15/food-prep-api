@@ -1,11 +1,12 @@
 'use strict';
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const { mealPlanSchema } = require('../meals/model')
+const { listSchema } = require('../lists/model')
 
 mongoose.Promise = global.Promise;
 
 const UserSchema = mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
   username: {
     type: String,
     required: true,
@@ -14,7 +15,9 @@ const UserSchema = mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  meals: [mealPlanSchema],
+  lists: [listSchema]
 });
 
 UserSchema.methods.serialize = function() {

@@ -6,19 +6,23 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const passport = require('passport');
 const jwtAuth = passport.authenticate('jwt', { session: false })
-const { MealPlan } = require('./model');
-const { User } = require('../users/model')
+const { List } = require('./model');
 
 mongoose.Promise = global.Promise;
 
 router.use(jsonParser);
-router.use(jwtAuth)
+router.use(jwtAuth);
 
 router.get('/:userId', (req, res) => {
-  User.findById(req.params.userId)
-    .then(user => {
-      res.json(user.meals)
-    });
+    List
+        .find()
+        .then(lists => {
+            res.json(list.map(list => list.serialize()));
+        })
+        .catch(err => {list
+            console.error(err);
+            res.status(500).json({error: 'Could not GET'});
+        });
 });
 
 router.post('/:userId', (req, res) => {
@@ -31,7 +35,6 @@ router.post('/:userId', (req, res) => {
     }
     User.findById(req.params.userId)
     .then(user => {
-      console.log('adding a new meal')
       user.meals.push(plan)
 
       user.save(err => {
@@ -44,26 +47,23 @@ router.post('/:userId', (req, res) => {
 
 router.put('/:userId/:id', jsonParser, (req, res) => {
     const toUpdate = {};
-    const updateableFields = ['title', 'start', 'end', 'desc'];
+    const updateableFields = ['date', 'title', 'content'];
     updateableFields.forEach(field => {
       if (field in req.body) {
         toUpdate[field] = req.body[field];
       }
     });
-    User.findById(req.params.userId)
-      .then(user => {res.json(user.meals)
-        .findByIdAndUpdate(req.params.id, { $set: toUpdate })
-        .then(meal => res.status(204).end())
-        .catch(err => res.status(500).json({ message: 'Could not update' }));
-      })
-
+    List
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate })
+      .then(items => res.status(204).end())
+      .catch(err => res.status(500).json({ message: 'Could not update' }));
 });
 
 router.delete('/:userId/:id', (req, res) => {
-    MealPlan
+    List
         .findByIdAndRemove(req.params.id)
         .then(() => {
-            res.status(204).json({message: `Meal Plan \`${req.params.id}\` was deleted`});
+            res.status(204).json({message: `list \`${req.params.id}\` was deleted`});
         })
         .catch(err => {
             console.error(err);
