@@ -10,8 +10,6 @@ const cors = require('cors');
 const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 const { router: mealPlanRouter } = require('./meals');
-const { router: pantryRouter } = require('./pantry');
-const { router: recipesRouter } = require('./recipes');
 const { router: listRouter } = require('./lists');
 
 mongoose.Promise = global.Promise;
@@ -42,8 +40,6 @@ passport.use(jwtStrategy);
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 app.use('/api/meals/', mealPlanRouter);
-app.use('/api/pantry/', pantryRouter);
-app.use('/api/recipes/', recipesRouter);
 app.use('/api/lists/', listRouter);
 
 let server;

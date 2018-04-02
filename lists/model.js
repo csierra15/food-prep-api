@@ -10,7 +10,6 @@ const listSchema = mongoose.Schema({
 });
 
 listSchema.methods.serialize = function() {
-
   return {
     id: this._id,
     title: this.title,

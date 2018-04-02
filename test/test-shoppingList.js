@@ -6,14 +6,14 @@
 // const mongoose = require('mongoose');
 // const should = chai.should();
 //
-// const { ShoppingList, router } = require('../shoppingList');
+// const { List, router } = require('../lists');
 // const { app, runServer, closeServer } = require('../server');
 // const { DATABASE_URL } = require('../config');
 //
 // chai.use(chaiHttp);
 //
-// function seedShoppingListData() {
-//     console.info('seeding shoppingList data');
+// function seedListData() {
+//     console.info('seeding list data');
 //     const seedData = [];
 //
 //     for (let i=0; i<=10; i++) {
@@ -23,7 +23,7 @@
 //           content: faker.lorem.sentences()
 //         });
 //     }
-//     return ShoppingList.insertMany(seedData);
+//     return List.insertMany(seedData);
 // }
 //
 // function tearDownDb() {
@@ -37,7 +37,7 @@
 //       });
 //
 //       beforeEach(function() {
-//         return seedShoppingListData();
+//         return seedListData();
 //       });
 //
 //       afterEach(function() {
@@ -51,7 +51,7 @@
 //       describe('GET endpoint', function() {
 //           it('should return all shopping lists', function() {
 //               let res;
-//               let resShoppingList;
+//               let resList;
 //               return chai.request(app)
 //                 .get('/api/shopping-lists/')
 //                 .then(function(res) {
@@ -60,23 +60,23 @@
 //                     res.body.should.be.a('array');
 //                     res.body.should.have.length.of.at.least(1);
 //
-//                     res.body.forEach(function(shoppingList) {
-//                         shoppingList.should.be.a('object');
-//                         shoppingList.should.include.keys('id', 'date', 'title', 'content');
+//                     res.body.forEach(function(list) {
+//                         list.should.be.a('object');
+//                         list.should.include.keys('id', 'date', 'title', 'content');
 //                     });
 //
-//                     resShoppingList = res.body[0];
-//                     return ShoppingList.findById(resShoppingList.id);
+//                     resList = res.body[0];
+//                     return List.findById(resList.id);
 //                 })
-//                 .then(function(shoppingList) {
-//                     resShoppingList.id.should.equal(shoppingList.id);
+//                 .then(function(list) {
+//                     resList.id.should.equal(list.id);
 //                 });
 //           });
 //       });
 //
 //       describe('POST endpoint', function() {
 //           it('should add a new shopping list', function() {
-//               const newShoppingList = {
+//               const newList = {
 //                 date: '3-8-18',
 //                 title: 'My Shopping List',
 //                 content: 'bananas, apples, butter'
@@ -84,7 +84,7 @@
 //
 //               return chai.request(app)
 //                 .post('/api/shopping-lists/')
-//                 .send(newShoppingList)
+//                 .send(newList)
 //                 .then(function(res) {
 //                     res.should.have.status(201);
 //                     res.body.should.be.a('object');
@@ -99,22 +99,22 @@
 //       //         const updateData = {
 //       //             menu: [{
 //       //               type: 'Breakfast',
-//       //               shoppingList: 'spinach, bacon, mushroom, swiss omelette'
+//       //               list: 'spinach, bacon, mushroom, swiss omelette'
 //       //             }]
 //       //         };
 //       //
-//       //         return ShoppingList
+//       //         return List
 //       //           .findOne()
 //       //           .then(function(res) {
 //       //               updateData.id = res.body.id;
 //       //
 //       //               return chai.request(app)
-//       //                   .put(`/api/shopping-lists/${shoppingList.id}`)
+//       //                   .put(`/api/shopping-lists/${list.id}`)
 //       //                   .send(updateData);
 //       //           })
 //       //           .then(function(res) {
 //       //               res.should.have.status(204)
-//       //               return ShoppingList.findById(updateData.id);
+//       //               return List.findById(updateData.id);
 //       //           })
 //       //           .then(function(res) {
 //       //               res.body.menu.should.equal(updateData.menu);
@@ -125,20 +125,20 @@
 //       describe('DELETE endpoint', function() {
 //         it('delete a shopping list by id', function() {
 //
-//           let shoppingList;
+//           let list;
 //
-//           return ShoppingList
+//           return List
 //             .findOne()
-//             .then(function(_shoppingList) {
-//               shoppingList = _shoppingList;
-//               return chai.request(app).delete(`/api/shopping-lists/${shoppingList.id}`);
+//             .then(function(_list) {
+//               list = _list;
+//               return chai.request(app).delete(`/api/shopping-lists/${list.id}`);
 //             })
 //             .then(function(res) {
 //               res.should.have.status(204);
-//               return ShoppingList.findById(shoppingList.id);
+//               return List.findById(list.id);
 //             })
-//             .then(function(_shoppingList) {
-//               should.not.exist(_shoppingList);
+//             .then(function(_list) {
+//               should.not.exist(_list);
 //             });
 //         });
 //       });

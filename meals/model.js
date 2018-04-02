@@ -5,9 +5,9 @@ const uuid = require('uuid');
 
 const mealPlanSchema = mongoose.Schema({
   title: String,
-  start: Date,
-  end: Date,
-  desc: Object
+  start: String,
+  end: String,
+  startTime: String
 });
 
 mealPlanSchema.methods.serialize = function() {
@@ -16,7 +16,7 @@ mealPlanSchema.methods.serialize = function() {
     title: this.title,
     start: this.start,
     end: this.end,
-    desc: this.desc
+    startTime: this.startTime
   }
 }
 

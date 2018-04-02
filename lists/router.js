@@ -14,28 +14,24 @@ router.use(jsonParser);
 router.use(jwtAuth);
 
 router.get('/:userId', (req, res) => {
-    List
-        .find()
-        .then(lists => {
-            res.json(list.map(list => list.serialize()));
-        })
-        .catch(err => {list
-            console.error(err);
-            res.status(500).json({error: 'Could not GET'});
-        });
-});
+  router.get('/:userId', (req, res) => {
+    User.findById(req.params.userId)
+      .then(user => {
+        res.json(user.lists)
+      });
+  });
+
 
 router.post('/:userId', (req, res) => {
   console.log(req.body);
   const plan = {
-        title: req.body.values.mealDescription,
-        start: req.body.values.dateInput,
-        end: req.body.values.dateInput,
-        desc: req.body.values.desc
+        title: req.body.title,
+        date: req.body.date,
+        content: req.body.content
     }
     User.findById(req.params.userId)
     .then(user => {
-      user.meals.push(plan)
+      user.lists.push(plan)
 
       user.save(err => {
         if (err) {
@@ -53,22 +49,28 @@ router.put('/:userId/:id', jsonParser, (req, res) => {
         toUpdate[field] = req.body[field];
       }
     });
-    List
-      .findByIdAndUpdate(req.params.id, { $set: toUpdate })
-      .then(items => res.status(204).end())
-      .catch(err => res.status(500).json({ message: 'Could not update' }));
+    User.findById(req.params.userId)
+      .then(user => {res.json(user.lists)
+        .findByIdAndUpdate(req.params.listId, { $set: toUpdate })
+        .then(user => {
+          user.save()
+          res.status(204).end()
+        })
+        .catch(err => res.status(500).json({ message: 'Could not update' }));
+      })
 });
 
 router.delete('/:userId/:id', (req, res) => {
-    List
-        .findByIdAndRemove(req.params.id)
-        .then(() => {
-            res.status(204).json({message: `list \`${req.params.id}\` was deleted`});
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({error: 'Could not DELETE'});
-        });
+  User.findById(req.params.userId)
+    .then(user => {res.json(user.lists)
+      .findByIdAndRemove(req.params.listId)
+      .then(() => {
+        res.status(204).json({message: `list \`${req.params.listId}\` was deleted`});
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).json({error: 'Could not DELETE'});
+      });
 });
 
 module.exports = { router };

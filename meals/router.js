@@ -25,50 +25,55 @@ router.post('/:userId', (req, res) => {
   console.log(req.body);
   const plan = {
         title: req.body.values.mealDescription,
-        start: req.body.values.dateInput,
-        end: req.body.values.dateInput,
-        desc: req.body.values.desc
+        start: req.body.values.start,
+        end: req.body.values.end,
+        startTime: req.body.values.timeInput
     }
     User.findById(req.params.userId)
     .then(user => {
-      console.log('adding a new meal')
       user.meals.push(plan)
 
       user.save(err => {
         if (err) {
           res.send(err)
         }
+        res.json(user)
       })
     })
 });
 
 router.put('/:userId/:id', jsonParser, (req, res) => {
-    const toUpdate = {};
-    const updateableFields = ['title', 'start', 'end', 'desc'];
-    updateableFields.forEach(field => {
-      if (field in req.body) {
-        toUpdate[field] = req.body[field];
-      }
-    });
-    User.findById(req.params.userId)
-      .then(user => {res.json(user.meals)
-        .findByIdAndUpdate(req.params.id, { $set: toUpdate })
-        .then(meal => res.status(204).end())
-        .catch(err => res.status(500).json({ message: 'Could not update' }));
-      })
+  console.log(req.body);
+  const toUpdate = {};
+  const updateableFields = ['date', 'title', 'content'];
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      toUpdate[field] = req.body[field];
+    }
+  });
 
+  User.findById(req.params.userId)
+    .then(user => {res.json(user.meals)
+      .findByIdAndUpdate(req.params.mealId, { $set: toUpdate })
+      .then(user => {
+        user.save()
+        res.status(204).end()
+      })
+      .catch(err => res.status(500).json({ message: 'Could not update' }));
+    })
 });
 
 router.delete('/:userId/:id', (req, res) => {
-    MealPlan
-        .findByIdAndRemove(req.params.id)
-        .then(() => {
-            res.status(204).json({message: `Meal Plan \`${req.params.id}\` was deleted`});
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({error: 'Could not DELETE'});
-        });
+  User.findById(req.params.userId)
+    .then(user => {res.json(user.meals)
+      .findByIdAndRemove(req.params.mealId)
+      .then(() => {
+        res.status(204).json({message: `meal \`${req.params.mealId}\` was deleted`});
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).json({error: 'Could not DELETE'});
+      });
 });
 
 module.exports = { router };
