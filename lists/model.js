@@ -6,7 +6,7 @@ const uuid = require('uuid');
 const listSchema = mongoose.Schema({
   date: String,
   title: String,
-  content: String
+  content: [String]
 });
 
 listSchema.methods.serialize = function() {
