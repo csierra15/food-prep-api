@@ -37,49 +37,38 @@ router.post('/:userId', (req, res) => {
         if (err) {
           res.send(err);
         }
-        res.json(user);
+        res.json(user.meals);
       });
     });
 });
 
 router.put('/:userId/:mealId', jsonParser, (req, res) => {
-  console.log(req.body);
-  const toUpdate = {};
-  const updateableFields = ['date', 'title', 'content'];
-  updateableFields.forEach(field => {
-    if (field in req.body) {
-      toUpdate[field] = req.body[field];
-    }
-  });
-
   User.findById(req.params.userId)
     .then(user => {
-      let meal = user.meals.id(req.params.mealId)
-      meal.title = req.body.values.title
-      meal.start = req.body.values.start
-      meal.end = req.body.values.end
+      let meal = user.meals.id(req.params.mealId);
+      meal.title = req.body.values.title;
+      meal.start = req.body.values.start;
+      meal.end = req.body.values.end;
 
       user.save((err, user) => {
         if (err) {
-          res.send(err)
-        }
-        res.json(user.meals)
-      })
+          res.send(err);
+        };
+        res.json(user.meals);
+      });
     });
 });
 
 router.delete('/:userId/:mealId', (req, res) => {
-  console.log(req.params);
   User.findById(req.params.userId)
     .then(user => {
-      user.meals.id(req.params.mealId).remove()
-      console.log(user.meals);
+      user.meals.id(req.params.mealId).remove();
       user.save((err, user) => {
         if (err) {
-          res.send(err)
-        }
-        res.json(user.meals)
-      })
+          res.send(err);
+        };
+        res.json(user.meals);
+      });
     });
 });
 

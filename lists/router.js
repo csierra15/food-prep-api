@@ -15,63 +15,58 @@ router.use(jsonParser);
 router.use(jwtAuth);
 
 router.get('/:userId', (req, res) => {
-  router.get('/:userId', (req, res) => {
-    User.findById(req.params.userId)
-      .then(user => {
-        res.json(user.lists)
-      });
-  });
+  User.findById(req.params.userId)
+    .then(user => {
+      res.json(user.lists)
+    });
 });
-
 
 router.post('/:userId', (req, res) => {
   console.log(req.body);
   const plan = {
         title: req.body.values.title,
-        date: req.body.values.date,
-        content: req.body.values.content
-    };
+        content: req.body.values.content,
+        date: req.body.values.date
+    }
     User.findById(req.params.userId)
     .then(user => {
-      user.lists.push(plan)
+      user.lists.push(plan);
 
       user.save(err => {
         if (err) {
-          res.send(err)
+          res.send(err);
         }
+        res.json(user.lists);
       });
     });
 });
 
-router.put('/:userId/:id', jsonParser, (req, res) => {
-    const toUpdate = {};
-    const updateableFields = ['date', 'title', 'content'];
-    updateableFields.forEach(field => {
-      if (field in req.body) {
-        toUpdate[field] = req.body[field];
-      }
+router.put('/:userId/:listId', jsonParser, (req, res) => {
+  User.findById(req.params.userId)
+    .then(user => {
+      let list = user.lists.id(req.params.listId);
+      list.title = req.body.values.title;
+      list.content = req.body.values.content;
+      list.date = req.body.values.date;
+
+      user.save((err, user) => {
+        if (err) {
+          res.send(err);
+        };
+        res.json(user.lists);
+      });
     });
-    User.findById(req.params.userId)
-      .then(user => {res.json(user.lists)
-        .findByIdAndUpdate(req.params.listId, { $set: toUpdate })
-        .then(user => {
-          user.save();
-          res.status(204).end();
-        })
-        .catch(err => res.status(500).json({ message: 'Could not update' }));
-      })
 });
 
-router.delete('/:userId/:id', (req, res) => {
+router.delete('/:userId/:listId', (req, res) => {
   User.findById(req.params.userId)
-    .then(user => {res.json(user.lists)
-      .findByIdAndRemove(req.params.listId)
-      .then(() => {
-        res.status(204).json({message: `list \`${req.params.listId}\` was deleted`});
-      })
-      .catch(err => {
-        console.error(err);
-        res.status(500).json({error: 'Could not DELETE'});
+    .then(user => {
+      user.lists.id(req.params.listId).remove();
+      user.save((err, user) => {
+        if (err) {
+          res.send(err);
+        };
+        res.json(user.lists);
       });
     });
 });
