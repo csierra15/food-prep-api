@@ -5,14 +5,14 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const passport = require('passport');
-const jwtAuth = passport.authenticate('jwt', { session: false })
+const jwtAuth = passport.authenticate('jwt', { session: false });
 const { MealPlan } = require('./model');
 const { User } = require('../users/model')
 
 mongoose.Promise = global.Promise;
 
 router.use(jsonParser);
-router.use(jwtAuth)
+router.use(jwtAuth);
 
 router.get('/:userId', (req, res) => {
   User.findById(req.params.userId)
@@ -31,18 +31,18 @@ router.post('/:userId', (req, res) => {
     }
     User.findById(req.params.userId)
     .then(user => {
-      user.meals.push(plan)
+      user.meals.push(plan);
 
       user.save(err => {
         if (err) {
-          res.send(err)
+          res.send(err);
         }
-        res.json(user)
-      })
-    })
+        res.json(user);
+      });
+    });
 });
 
-router.put('/:userId/:id', jsonParser, (req, res) => {
+router.put('/:userId/:mealId', jsonParser, (req, res) => {
   console.log(req.body);
   const toUpdate = {};
   const updateableFields = ['date', 'title', 'content'];
@@ -53,27 +53,34 @@ router.put('/:userId/:id', jsonParser, (req, res) => {
   });
 
   User.findById(req.params.userId)
-    .then(user => {res.json(user.meals)
-      .findByIdAndUpdate(req.params.mealId, { $set: toUpdate })
-      .then(user => {
-        user.save()
-        res.status(204).end()
+    .then(user => {
+      let meal = user.meals.id(req.params.mealId)
+      meal.title = req.body.values.title
+      meal.start = req.body.values.start
+      meal.end = req.body.values.end
+
+      user.save((err, user) => {
+        if (err) {
+          res.send(err)
+        }
+        res.json(user.meals)
       })
-      .catch(err => res.status(500).json({ message: 'Could not update' }));
-    })
+    });
 });
 
-router.delete('/:userId/:id', (req, res) => {
+router.delete('/:userId/:mealId', (req, res) => {
+  console.log(req.params);
   User.findById(req.params.userId)
-    .then(user => {res.json(user.meals)
-      .findByIdAndRemove(req.params.mealId)
-      .then(() => {
-        res.status(204).json({message: `meal \`${req.params.mealId}\` was deleted`});
+    .then(user => {
+      user.meals.id(req.params.mealId).remove()
+      console.log(user.meals);
+      user.save((err, user) => {
+        if (err) {
+          res.send(err)
+        }
+        res.json(user.meals)
       })
-      .catch(err => {
-        console.error(err);
-        res.status(500).json({error: 'Could not DELETE'});
-      });
+    });
 });
 
 module.exports = { router };

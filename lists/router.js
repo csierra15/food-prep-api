@@ -7,6 +7,7 @@ const jsonParser = bodyParser.json();
 const passport = require('passport');
 const jwtAuth = passport.authenticate('jwt', { session: false })
 const { List } = require('./model');
+const { User } = require('../users/model')
 
 mongoose.Promise = global.Promise;
 
@@ -20,15 +21,16 @@ router.get('/:userId', (req, res) => {
         res.json(user.lists)
       });
   });
+});
 
 
 router.post('/:userId', (req, res) => {
   console.log(req.body);
   const plan = {
-        title: req.body.title,
-        date: req.body.date,
-        content: req.body.content
-    }
+        title: req.body.values.title,
+        date: req.body.values.date,
+        content: req.body.values.content
+    };
     User.findById(req.params.userId)
     .then(user => {
       user.lists.push(plan)
@@ -37,8 +39,8 @@ router.post('/:userId', (req, res) => {
         if (err) {
           res.send(err)
         }
-      })
-    })
+      });
+    });
 });
 
 router.put('/:userId/:id', jsonParser, (req, res) => {
@@ -53,8 +55,8 @@ router.put('/:userId/:id', jsonParser, (req, res) => {
       .then(user => {res.json(user.lists)
         .findByIdAndUpdate(req.params.listId, { $set: toUpdate })
         .then(user => {
-          user.save()
-          res.status(204).end()
+          user.save();
+          res.status(204).end();
         })
         .catch(err => res.status(500).json({ message: 'Could not update' }));
       })
@@ -71,6 +73,7 @@ router.delete('/:userId/:id', (req, res) => {
         console.error(err);
         res.status(500).json({error: 'Could not DELETE'});
       });
+    });
 });
 
 module.exports = { router };
