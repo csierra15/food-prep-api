@@ -58,17 +58,18 @@ router.put('/:userId/:listId', jsonParser, (req, res) => {
     });
 });
 
-router.put('/:userId/:listId', jsonParser, (req, res) => {
+router.put('/:userId/:listId/content', jsonParser, (req, res) => {
   User.findById(req.params.userId)
     .then(user => {
       let list = user.lists.id(req.params.listId);
-      list.content = req.body
+      list.content = req.body.listContent
 
       user.save((err, user) => {
         if (err) {
           res.send(err);
         };
-        res.json(user.lists);
+        let list = user.lists.id(req.params.listId);
+        res.json(list);
       });
     });
 });
