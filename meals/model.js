@@ -1,23 +1,25 @@
 'use strict'
-
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-
 const uuid = require('uuid');
 
 const mealPlanSchema = mongoose.Schema({
-  date: String,
-  menu: Array
+  title: String,
+  start: String,
+  end: String,
+  startTime: String
 });
 
 mealPlanSchema.methods.serialize = function() {
   return {
     id: this._id,
-    date: this.date,
-    menu: this.menu
+    title: this.title,
+    start: this.start,
+    end: this.end,
+    startTime: this.startTime
   }
 }
 
 const MealPlan = mongoose.model('MealPlan', mealPlanSchema);
 
-module.exports = { MealPlan }
+module.exports = { MealPlan, mealPlanSchema }

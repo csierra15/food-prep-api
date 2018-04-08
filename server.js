@@ -1,5 +1,4 @@
 'use strict';
-
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -11,13 +10,13 @@ const cors = require('cors');
 const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 const { router: mealPlanRouter } = require('./meals');
-const { router: pantryRouter } = require('./pantry');
-const { router: recipesRouter } = require('./recipes');
-const { router: shoppingListRouter } = require('./shoppingList');
+const { router: listRouter } = require('./lists');
 
 mongoose.Promise = global.Promise;
 
 const { PORT, DATABASE_URL, CLIENT_ORIGIN } = require('./config');
+
+app.use(morgan('common'));
 
 app.use(
     cors({
@@ -25,16 +24,12 @@ app.use(
     })
 );
 
-// Logging
-app.use(morgan('common'));
-
-// CORS
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
   if (req.method === 'OPTIONS') {
-    return res.send(204);
+    return res.sendStatus(204);
   }
   next();
 });
@@ -44,19 +39,8 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
-app.use('/api/meal-plans/', mealPlanRouter);
-app.use('/api/pantry/', pantryRouter);
-app.use('/api/recipes/', recipesRouter);
-app.use('/api/shopping-lists/', shoppingListRouter);
-
-const jwtAuth = passport.authenticate('jwt', { session: false });
-
-// A protected endpoint which needs a valid JWT to access it
-app.get('/api/protected', jwtAuth, (req, res) => {
-  return res.json({
-    data: 'rosebud'
-  });
-});
+app.use('/api/meals/', mealPlanRouter);
+app.use('/api/lists/', listRouter);
 
 let server;
 
