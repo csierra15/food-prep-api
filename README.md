@@ -1,3 +1,7 @@
-#Food Prep API
+# Food Prep Backend
 ---
-##Node based backend for [Food Prep App](https://github.com/csierra15/food-prep-client)
+Backend for [Food Prep App](https://github.com/csierra15/food-prep-client)
+
+## Tech Used
+---
+NodeJS, Express, Mongoose, JWT
